@@ -9,7 +9,7 @@ export default interface SheetStore {
   currentSelectColumnIndex?: number
 
   // 当前选择的范围单元格集合
-  currentSelectionRangeCell?: [SelectionRangeCell]
+  currentSelectionRangeCell?: SelectionRangeCell
 
 
   //////////////////////////////////////////////////////

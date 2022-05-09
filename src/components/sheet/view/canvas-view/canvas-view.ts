@@ -1,40 +1,25 @@
 import { Worksheet } from "exceljs";
 import sheetUtils from "../../utils/sheet-utils";
 import SheetViewDelegate from "../sheet-view-delegate";
-import ColumnTitleBarView from "./column-title-bar-view";
-import RowTitleBarView from "./row-title-bar-view";
-import SelectAllCellView from "./select-all-cell-view";
+import HandlerDelegate from "./handler/handler-delegate";
+import SingleSelectionHandler from "./handler/single-selection-handler";
 
-export default class CanvasView {
+export default class CanvasView implements HandlerDelegate {
 
   private delegate: SheetViewDelegate
   private canvasElement: HTMLCanvasElement
   private canvasContext: CanvasRenderingContext2D
-  private rowTitleBarView: RowTitleBarView
-  private columnTitleBarView: ColumnTitleBarView
-  private selectAllCellView: SelectAllCellView
+
+  private singleSelectionHandler: SingleSelectionHandler
 
 
-  constructor(canvasContainerId: string, delegate: SheetViewDelegate) {
-    let canvasContainerNode = delegate.getNode(canvasContainerId)
-    if (!canvasContainerNode) {
-      throw new Error('canvas容器节点不存在')
-    }
-
+  constructor(delegate: SheetViewDelegate) {
     this.delegate = delegate
-    canvasContainerNode.innerHTML = `
-      <canvas id="${delegate.getConfiguration().canvasElementId}"></canvas>
-
-      <!-- 单选单元格 -->
-    `
 
     this.canvasElement = this.delegate.getNode(this.delegate.getConfiguration().canvasElementId) as HTMLCanvasElement
     this.canvasContext = this.canvasElement.getContext('2d')!
 
-    // -
-    this.rowTitleBarView = new RowTitleBarView(this.delegate, this.canvasContext)
-    this.columnTitleBarView = new ColumnTitleBarView(this.delegate, this.canvasContext)
-    this.selectAllCellView = new SelectAllCellView(this.delegate, this.canvasContext)
+    this.singleSelectionHandler = new SingleSelectionHandler(this)
   }
 
   // 绘制
@@ -64,16 +49,126 @@ export default class CanvasView {
      * 绘制行标题栏
      * 绘制列标题栏
      */
-    this.rowTitleBarView.render()
-    this.columnTitleBarView.render()
-    this.selectAllCellView.render()
+    this.renderRowTitleBarView()
+    this.renderColumnTitleBarView()
+    this.renderSelectAllCellView()
 
     // -
     this.renderCellSplitLineView()
   }
 
   ///////////////////////////////////////////////////////////////////////
+  // 处理器代理
 
+  getSheetViewDelegate(): SheetViewDelegate {
+    return this.delegate
+  }
+  getCanvasElement(): HTMLCanvasElement {
+    return this.canvasElement
+  }
+  getCanvasContext(): CanvasRenderingContext2D {
+    return this.canvasContext
+  }
+
+  ///////////////////////////////////////////////////////////////////////
+
+  /**
+   * 高亮单个单元格
+   * @param rowIndex 行
+   * @param columnIndex 列 
+   */
+  public highlightCell(rowIndex: number, columnIndex: number) {
+    this.singleSelectionHandler.highlightCell(rowIndex, columnIndex)
+  }
+
+  highlightRangeCell(startRowIndex: number, endRowIndex: number, startColumnIndex: number, endColumnIndex: number) {
+    this.singleSelectionHandler.highlightRangeCell(startRowIndex, endRowIndex, startColumnIndex, endColumnIndex)
+  }
+
+  private renderSelectAllCellView() {
+    // 当行标题栏 或者 列标题栏 存在一个绘制前提下，即绘制全选单元格
+    if (!this.delegate.getConfiguration().rowTitleBarVisible && !this.delegate.getConfiguration().columnBarTitleVisible) {
+      return
+    }
+
+    // 全选单元格
+    const cellX = 0
+    const cellY = 0
+    const cellWidth = this.delegate.getRenderedRowTitleBarWidth()
+    const cellHeight = this.delegate.getRenderedColumnTitleBarHeight()
+    // 全选单元格 - 内的三角形与边界的距离
+    const triangleIntervalSpece = this.delegate.getConfiguration().selectAllCellConfig.triangleIntervalSpace
+    this.canvasContext.strokeStyle = this.delegate.getConfiguration().splitLineStrokeStyle
+    this.canvasContext.lineWidth = 1
+    this.canvasContext.strokeRect(cellX, cellY, cellWidth, cellHeight)
+
+    // 全选单元格的三角形
+    const triangleSideLength = this.delegate.getRenderedColumnTitleBarHeight() - triangleIntervalSpece * 2
+    this.canvasContext.beginPath()
+    // 直角的位置
+    this.canvasContext.moveTo(this.delegate.getRenderedRowTitleBarWidth() - triangleIntervalSpece, this.delegate.getRenderedColumnTitleBarHeight() - triangleIntervalSpece)
+    // 直角上边的角的位置
+    this.canvasContext.lineTo(this.delegate.getRenderedRowTitleBarWidth() - triangleIntervalSpece, this.delegate.getRenderedColumnTitleBarHeight() - triangleIntervalSpece - triangleSideLength)
+    // 直角左边的角的位置
+    this.canvasContext.lineTo(this.delegate.getRenderedRowTitleBarWidth() - triangleIntervalSpece - triangleSideLength, this.delegate.getRenderedColumnTitleBarHeight() - triangleIntervalSpece)
+    this.canvasContext.fillStyle = this.delegate.getConfiguration().selectAllCellConfig.triangleFillStyle
+    this.canvasContext.lineWidth = 1
+    this.canvasContext.fill()
+  }
+
+  private renderRowTitleBarView() {
+    if (!this.delegate.getConfiguration().rowTitleBarVisible) {
+      return
+    }
+
+    let startX = 0
+    let startY = this.delegate.getRenderedColumnTitleBarHeight()
+
+    for (let rowIndex = 0; rowIndex < this.delegate.getCurrentSheetStore().renderedRowAmount; rowIndex++) {
+      let rowHeight = this.delegate.getStore().currentWorksheet.getRow(rowIndex + 1)?.height || this.delegate.getConfiguration().defaultRowHeight
+
+      // 行标题栏的边框线绘制
+      this.canvasContext.strokeStyle = this.delegate.getConfiguration().splitLineStrokeStyle
+      this.canvasContext.strokeRect(startX, startY, this.delegate.getRenderedRowTitleBarWidth(), rowHeight)
+
+      // 行标题栏的行标题文本绘制
+      const rowTitleBarItemCenterX = startX + this.delegate.getRenderedRowTitleBarWidth() / 2
+      const rowTitleBarItemCenterY = startY + rowHeight / 2
+      this.canvasContext.textAlign = 'center'
+      this.canvasContext.textBaseline = 'middle'
+      this.canvasContext.fillStyle = 'black'
+      this.canvasContext.fillText(`${rowIndex + 1}`, rowTitleBarItemCenterX, rowTitleBarItemCenterY)
+
+      startY += rowHeight
+    }
+  }
+
+  private renderColumnTitleBarView() {
+    if (!this.delegate.getConfiguration().columnBarTitleVisible) {
+      return
+    }
+
+    let startX = this.delegate.getRenderedRowTitleBarWidth()
+    let startY = 0
+
+    for (let columnIndex = 0; columnIndex < this.delegate.getCurrentSheetStore().renderedColumnAmount; columnIndex++) {
+      let columnWidth = this.delegate.getStore().currentWorksheet.getColumn(columnIndex + 1)?.width || this.delegate.getConfiguration().defaultColumnWidth
+
+      // 列标题栏的边框线绘制
+      this.canvasContext.strokeStyle = this.delegate.getConfiguration().splitLineStrokeStyle
+      this.canvasContext.strokeRect(startX, startY, columnWidth, this.delegate.getRenderedColumnTitleBarHeight())
+
+      // 列标题栏的列标题文本绘制
+      const columnTitleBarItemCenterX = startX + columnWidth / 2
+      const columnTitleBarItemCenterY = startY + this.delegate.getRenderedColumnTitleBarHeight() / 2
+      this.canvasContext.textAlign = 'center'
+      this.canvasContext.textBaseline = 'middle'
+      this.canvasContext.fillStyle = 'black'
+      this.canvasContext.fillText(`${sheetUtils.getColumnTitleFromIndex(columnIndex)}`, columnTitleBarItemCenterX, columnTitleBarItemCenterY)
+
+      startX += columnWidth
+    }
+  }
 
   /**
    * 绘制网格线 - 暂不考虑单元格合并的事宜

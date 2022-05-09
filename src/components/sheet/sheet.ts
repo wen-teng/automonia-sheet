@@ -1,6 +1,5 @@
 import './extension'
 import Configuration from "./configuration";
-import SheetDelegate from './sheet-delegate'
 import SheetStore from "./store/sheet-store";
 import Store from './store'
 import { Workbook, Worksheet } from "exceljs";
@@ -100,6 +99,10 @@ export default class Sheet implements EventHandlerDelegate, SheetViewDelegate {
     this.sheetView.renderCurrentWorksheet()
   }
 
+  ////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////
+
+
 
   ////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////
@@ -112,10 +115,38 @@ export default class Sheet implements EventHandlerDelegate, SheetViewDelegate {
     throw new Error('Method not implemented.');
   }
   highlightCell(rowIndex: number, columnIndex: number): void {
-    throw new Error('Method not implemented.');
+    if (!this.validateRowColumnIndex(rowIndex, columnIndex)) {
+      throw new Error(`行-列参数无效，非渲染行列数范围内，行${rowIndex}-${columnIndex}`)
+    }
+
+    // 缓存数据
+    const sheetStoreData = this.getCurrentSheetStore()
+    sheetStoreData.currentSelectRowIndex = rowIndex
+    sheetStoreData.currentSelectColumnIndex = columnIndex
+
+    this.sheetView.highlightCell(rowIndex, columnIndex)
   }
+
   highlightRangeCell(startRowIndex: number, endRowIndex: number, startColumnIndex: number, endColumnIndex: number): void {
-    throw new Error('Method not implemented.');
+    if (!this.validateRowColumnIndex(startRowIndex, startColumnIndex)) {
+      throw new Error(`行-列参数无效，非渲染行列数范围内，行${startRowIndex}-${startColumnIndex}`)
+    }
+    if (!this.validateRowColumnIndex(endRowIndex, endColumnIndex)) {
+      throw new Error(`行-列参数无效，非渲染行列数范围内，行${endRowIndex}-${endColumnIndex}`)
+    }
+
+    // 缓存数据
+    const sheetStoreData = this.getCurrentSheetStore()
+    sheetStoreData.currentSelectRowIndex = startRowIndex
+    sheetStoreData.currentSelectColumnIndex = startColumnIndex
+    sheetStoreData.currentSelectionRangeCell = {
+      startRowIndex,
+      endRowIndex,
+      startColumnIndex,
+      endColumnIndex
+    }
+
+    this.sheetView.highlightRangeCell(startRowIndex, endRowIndex, startColumnIndex, endColumnIndex)
   }
   handleDocumentMouseUp(event: MouseEvent): void {
     throw new Error('Method not implemented.');
@@ -149,6 +180,100 @@ export default class Sheet implements EventHandlerDelegate, SheetViewDelegate {
   }
   getRenderedColumnTitleBarHeight(): number {
     return this.configuration.columnBarTitleVisible ? this.configuration.columnTitleBarHeight : 0
+  }
+
+
+  ////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////
+
+  /**
+   * 行-列参数有效性判断
+   * @param rowIndex 行参数
+   * @param columnIndex  列参数
+   * @returns true - 行列都有效，false - 行列都无效
+   */
+  public validateRowColumnIndex(rowIndex: number, columnIndex: number): boolean {
+    const sheetStoreData = this.getCurrentSheetStore()
+    if (rowIndex < 0 || rowIndex > sheetStoreData.renderedRowAmount) {
+      // throw new Error(`行序号参数无效，${rowIndex}不在0-${sheetStoreData.renderedRowAmount}范围内`)
+      return false
+    }
+    if (columnIndex < 0 || columnIndex > sheetStoreData.renderedColumnAmount) {
+      // throw new Error(`列序号参数无效，${columnIndex}不在0-${sheetStoreData.renderedColumnAmount}范围内`)
+      return false
+    }
+    return true
+  }
+
+  /**
+   * 
+   * @param rowIndex 
+   * @param columnIndex 
+   * @returns 
+   */
+  public getCellSize(rowIndex: number, columnIndex: number): { width: number, height: number } {
+    if (!this.validateRowColumnIndex(rowIndex, columnIndex)) {
+      throw new Error(`行-列参数无效，非渲染行列数范围内，行${rowIndex}-列${columnIndex}`)
+    }
+
+    let worksheet = this.getStore().currentWorksheet
+    if (!worksheet) {
+      throw new Error(`当前工作表不存在`)
+    }
+
+    // 所在行的行高即单元格的高度
+    let rowHeight: number = 0
+    if (rowIndex !== undefined) {
+      rowHeight = worksheet.getRow(rowIndex + 1)?.height || this.getConfiguration().defaultRowHeight
+    }
+    // 所在列的列宽即单元格的宽度
+    let columnWidth: number = 0
+    if (columnIndex !== undefined) {
+      columnWidth = worksheet.getColumn(columnIndex + 1)?.width || this.getConfiguration().defaultColumnWidth
+    }
+
+    return {
+      width: columnWidth,
+      height: rowHeight
+    }
+  }
+
+  public getRowHeight(rowIndex: number): number {
+    if (!this.validateRowColumnIndex(rowIndex, 0)) {
+      throw new Error(`行参数无效，非渲染行列数范围内，行${rowIndex}`)
+    }
+
+    let worksheet = this.getStore().currentWorksheet
+    if (!worksheet) {
+      throw new Error(`当前工作表不存在`)
+    }
+
+    // 所在行的行高即单元格的高度
+    let rowHeight: number = 0
+    if (rowIndex !== undefined) {
+      rowHeight = worksheet.getRow(rowIndex + 1)?.height || this.getConfiguration().defaultRowHeight
+    }
+
+    return rowHeight
+  }
+
+  public getColumnWidth(columnIndex: number): number {
+    if (!this.validateRowColumnIndex(0, columnIndex)) {
+      throw new Error(`列参数无效，非渲染行列数范围内，列${columnIndex}`)
+    }
+
+    let worksheet = this.getStore().currentWorksheet
+    if (!worksheet) {
+      throw new Error(`当前工作表不存在`)
+    }
+
+    // 所在列的列宽即单元格的宽度
+    let columnWidth: number = 0
+    if (columnIndex !== undefined) {
+      columnWidth = worksheet.getColumn(columnIndex + 1)?.width || this.getConfiguration().defaultColumnWidth
+    }
+
+    return columnWidth
   }
 
 }

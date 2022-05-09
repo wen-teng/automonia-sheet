@@ -24,3 +24,65 @@
     background-color: white;
   }
 }
+
+
+// 单选单元格容器视图
+.sheet-single-container-view {
+
+  // 单选范围的行高亮线视图
+  .sheet-single-selection-row-line-view {
+    display: none;
+    position: absolute;
+    width: 1px;
+    background-color: #4b8cff;
+    pointer-events: none;
+  }
+
+  // 单选范围的列高亮线视图
+  .sheet-single-selection-column-line-view {
+    display: none;
+    position: absolute;
+    height: 1px;
+    background-color: #4b8cff;
+    pointer-events: none;
+  }
+
+  // 单选范围的选中行范围高亮视图
+  .sheet-single-selection-row-range-view {
+    display: none;
+    position: absolute;
+    background-color: rgba(192, 192, 192, 0.3);
+    pointer-events: none;
+  }
+
+  // 单选范围的选中列范围高亮视图
+  .sheet-single-selection-column-range-view {
+    display: none;
+    position: absolute;
+    background-color: rgba(192, 192, 192, 0.3);
+    pointer-events: none;
+  }
+
+  // 单选范围容器视图
+  .sheet-single-selection-view {
+    display: none;
+    position: absolute;
+    border: solid 0px rgba(1, 136, 251, 0.1);
+    box-shadow: #4b8cff 0px 0px 0px 2px;
+    box-sizing: border-box;
+    pointer-events: none; // 取消光标指向事件
+
+    // 单选范围的右下角方块视图
+    .sheet-single-selection-dot-view {
+      position: absolute;
+      right: -5px;
+      bottom: -5px;
+      background-color: #4b8cff;
+      height: 5px;
+      width: 5px;
+      border: 2px solid #ffffff;
+      cursor: crosshair;
+      pointer-events: unset;
+    }
+  }
+}

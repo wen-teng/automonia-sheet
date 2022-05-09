@@ -35,15 +35,29 @@ export default class Configuration {
 
   // 全选单元格的配置信息
   selectAllCellConfig = {
-    
     // 三角形间距距离
     triangleIntervalSpace: 3,
-
     // 三角形的填充颜色
     triangleFillStyle: '#ededed'
   }
 
+  // 单选单元格配置
+  singleSelectionConfig = {
+    // 高亮的单元格视图
+    viewElementId: 'sheet-single-selection-view',
+    // 右下角的方块视图
+    dotViewElementId: 'sheet-single-selection-dot-view',
+    // 单元格所在的行标题栏的右边的高亮线
+    rowLineViewElementId: 'sheet-single-selection-column-line-view',
+    // 单元格所在的列标题栏的下边的高亮线
+    columnLineViewElementId: 'sheet-single-selection-column-line',
+    // 单元格所在的行标题栏范围
+    rowRangeViewElementId: 'sheet-single-selection-row-range-view',
+    // 单元格所在的列标题栏范围
+    columnRangeViewElementId: 'sheet-single-selection-column-range'
+  }
 
+ 
   singleSelection = {
   }
 

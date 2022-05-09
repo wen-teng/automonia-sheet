@@ -61,6 +61,7 @@ export default class EventHandler {
       return
     }
     const sheetStoreData = this.delegate.getCurrentSheetStore()
+    console.log(sheetStoreData, 'sheetStoreData')
 
     // shift + 点击：范围单元格的处理（前提：已经存在一个高亮的单元格）
     if (
