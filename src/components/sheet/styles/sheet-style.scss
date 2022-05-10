@@ -25,6 +25,26 @@
   }
 }
 
+// 行标题栏拖动视图
+.row-drag-view {
+  display: none;
+  height: 5px;
+  position: absolute;
+  left: 1px;
+  cursor: row-resize;
+  background-color: #4b8cff;
+
+  .row-drag-line-view {
+    position: absolute;
+    display: none;
+    left: 0;
+    top: 2px;
+    height: 1px;
+    background-color: #4b8cff;
+    width: 100px;
+  }
+}
+
 
 // 单选单元格容器视图
 .sheet-single-container-view {

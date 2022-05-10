@@ -57,7 +57,18 @@ export default class Configuration {
     columnRangeViewElementId: 'sheet-single-selection-column-range'
   }
 
- 
+  // 行标题栏拖动配置
+  rowDragConfig = {
+    viewElementId: 'row-drag-view',
+    lienViewElementId: 'row-drag-line-view'
+  }
+
+  // 列标题栏拖动配置
+  columnDragConfig = {
+    viewElementId: 'column-drag-view',
+    lienViewElementId: 'column-drag-line-view'
+  }
+
   singleSelection = {
   }
 

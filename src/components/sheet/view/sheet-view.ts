@@ -1,5 +1,5 @@
 import { Workbook } from "exceljs";
-import EventHandler from "../event-handler";
+import EventHandler from "../event-handler/event-handler";
 import CanvasView from "./canvas-view/canvas-view";
 import SheetViewDelegate from "./sheet-view-delegate";
 
@@ -34,6 +34,17 @@ export default class SheetView {
             <div class="sheet-single-selection-row-range-view" id="${singleSelectionConfig.rowRangeViewElementId}"></div>
             <div class="sheet-single-selection-column-range-view" id="${singleSelectionConfig.columnRangeViewElementId}"></div>
           </div>
+
+          <!-- 行标题栏拖动视图 -->
+          <div class="row-drag-view" id="row-drag-view">
+            <div class="row-drag-line-view" id="row-drag-line-view"></div>
+          </div>
+
+          <!-- 列标题栏拖动视图 -->
+          <div class="column-drag-view" id="column-drag-view">
+            <div class="column-drag-line-view" id="column-drag-line-view"></div>
+          </div>
+                    
         </div>
         <div class="sheet-footer-bar-container-view" id="sheet-footer-bar-container-view"></div>
       </div>
@@ -56,13 +67,24 @@ export default class SheetView {
     this.canvasView.renderCurrentWorksheet()
   }
 
-  // 高亮单元格
   highlightCell(rowIndex: number, columnIndex: number) {
     this.canvasView.highlightCell(rowIndex, columnIndex)
   }
 
   highlightRangeCell(startRowIndex: number, endRowIndex: number, startColumnIndex: number, endColumnIndex: number) {
     this.canvasView.highlightRangeCell(startRowIndex, endRowIndex, startColumnIndex, endColumnIndex)
+  }
+
+  handleMouseMoveAboveRowDragView(canvasY: number) {
+    this.canvasView.handleMouseMoveAboveRowDragView(canvasY)
+  }
+
+  handleCanvasMouseMove(event: MouseEvent) {
+    this.canvasView.handleCanvasMouseMove(event)
+  }
+
+  handleDocumentMouseUp(event: MouseEvent) {
+    this.canvasView.handleDocumentMouseUp(event)
   }
 
 }

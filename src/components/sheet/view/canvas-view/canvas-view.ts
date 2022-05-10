@@ -2,6 +2,7 @@ import { Worksheet } from "exceljs";
 import sheetUtils from "../../utils/sheet-utils";
 import SheetViewDelegate from "../sheet-view-delegate";
 import HandlerDelegate from "./handler/handler-delegate";
+import RowDragHandler from "./handler/row-drag-handler";
 import SingleSelectionHandler from "./handler/single-selection-handler";
 
 export default class CanvasView implements HandlerDelegate {
@@ -11,6 +12,7 @@ export default class CanvasView implements HandlerDelegate {
   private canvasContext: CanvasRenderingContext2D
 
   private singleSelectionHandler: SingleSelectionHandler
+  private rowDragHandler: RowDragHandler
 
 
   constructor(delegate: SheetViewDelegate) {
@@ -19,7 +21,9 @@ export default class CanvasView implements HandlerDelegate {
     this.canvasElement = this.delegate.getNode(this.delegate.getConfiguration().canvasElementId) as HTMLCanvasElement
     this.canvasContext = this.canvasElement.getContext('2d')!
 
+    // 各种处理器创建
     this.singleSelectionHandler = new SingleSelectionHandler(this)
+    this.rowDragHandler = new RowDragHandler(this)
   }
 
   // 绘制
@@ -81,8 +85,20 @@ export default class CanvasView implements HandlerDelegate {
     this.singleSelectionHandler.highlightCell(rowIndex, columnIndex)
   }
 
-  highlightRangeCell(startRowIndex: number, endRowIndex: number, startColumnIndex: number, endColumnIndex: number) {
+  public highlightRangeCell(startRowIndex: number, endRowIndex: number, startColumnIndex: number, endColumnIndex: number) {
     this.singleSelectionHandler.highlightRangeCell(startRowIndex, endRowIndex, startColumnIndex, endColumnIndex)
+  }
+
+  public handleMouseMoveAboveRowDragView(canvasY: number) {
+    this.rowDragHandler.handleMouseMoveAboveRowDragView(canvasY)
+  }
+
+  public handleDocumentMouseUp(event: MouseEvent) {
+    this.rowDragHandler.handleRowDragViewMouseUp(event)
+  }
+
+  public handleCanvasMouseMove(event: MouseEvent) {
+    this.rowDragHandler.handleCanvasMouseMove(event)
   }
 
   private renderSelectAllCellView() {

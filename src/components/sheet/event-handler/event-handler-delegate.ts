@@ -1,18 +1,18 @@
-import KeywordMouseEventHandler from "."
+import KeywordMouseEventHandler from "./event-handler"
 import SheetDelegate from "../sheet-delegate"
 
 export default interface EventHandlerDelegate extends SheetDelegate {
 
   /**
-   * 高亮行标题栏
-   * @param rowIndex 行序号
+   * 处理鼠标移动到行拖动视图上方
+   * @param canvasY 在canvas上的y坐标
    */
-  highlightRowTitleBarView(rowIndex: number): void
+  handleMouseMoveAboveRowDragView(canvasY: number): void
 
-  /**
-   * 取消行标题栏的高亮
-   */
-  cancelHighlightRowTitleBarView(): void
+  // /**
+  //  * 取消行标题栏的高亮
+  //  */
+  // cancelHighlightRowTitleBarView(): void
 
   /**
    * 单元格的高亮

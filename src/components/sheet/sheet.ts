@@ -5,8 +5,8 @@ import Store from './store'
 import { Workbook, Worksheet } from "exceljs";
 import SheetView from "./view/sheet-view";
 import SheetViewDelegate from "./view/sheet-view-delegate";
-import EventHandler from './event-handler';
-import EventHandlerDelegate from './event-handler/delegate';
+import EventHandler from './event-handler/event-handler';
+import EventHandlerDelegate from './event-handler/event-handler-delegate';
 
 /**
  * 表单对象
@@ -107,13 +107,18 @@ export default class Sheet implements EventHandlerDelegate, SheetViewDelegate {
   ////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////
 
+  handleCanvasMouseMove(event: MouseEvent) {
+    this.sheetView.handleCanvasMouseMove(event)
+  }
 
-  highlightRowTitleBarView(rowIndex: number): void {
-    throw new Error('Method not implemented.');
+  handleDocumentMouseUp(event: MouseEvent) {
+    this.sheetView.handleDocumentMouseUp(event)
   }
-  cancelHighlightRowTitleBarView(): void {
-    throw new Error('Method not implemented.');
+
+  handleMouseMoveAboveRowDragView(canvasY: number) {
+    this.sheetView.handleMouseMoveAboveRowDragView(canvasY)
   }
+
   highlightCell(rowIndex: number, columnIndex: number): void {
     if (!this.validateRowColumnIndex(rowIndex, columnIndex)) {
       throw new Error(`行-列参数无效，非渲染行列数范围内，行${rowIndex}-${columnIndex}`)
@@ -147,12 +152,6 @@ export default class Sheet implements EventHandlerDelegate, SheetViewDelegate {
     }
 
     this.sheetView.highlightRangeCell(startRowIndex, endRowIndex, startColumnIndex, endColumnIndex)
-  }
-  handleDocumentMouseUp(event: MouseEvent): void {
-    throw new Error('Method not implemented.');
-  }
-  handleCanvasMouseMove(event: MouseEvent): void {
-    throw new Error('Method not implemented.');
   }
 
 

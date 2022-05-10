@@ -1,4 +1,4 @@
-import EventHandlerDelegate from "./delegate";
+import EventHandlerDelegate from "./event-handler-delegate";
 import KeyboardKeys from "./keyboard-keys";
 
 
@@ -49,10 +49,31 @@ export default class EventHandler {
 
 
   private handleCanvasElementMouseMove(event: MouseEvent) {
+    this.delegate.handleCanvasMouseMove(event)
+
+    let pageX = event.pageX
+    let pageY = event.pageY
+    let canvasClientRect = this.canvasElement.getBoundingClientRect()
+
+    /**
+     * 高亮行标题栏拖动视图
+     * 判断条件：如果行标题栏显示并pageX在标题栏上
+     */
+    if (
+      this.delegate.getConfiguration().rowTitleBarVisible
+      && pageX - canvasClientRect.left >= 0
+      && pageX - canvasClientRect.left <= this.delegate.getRenderedRowTitleBarWidth()
+    ) {
+      let canvasY = pageY - canvasClientRect.top - this.delegate.getRenderedColumnTitleBarHeight()
+      this.delegate.handleMouseMoveAboveRowDragView(canvasY)
+    } else {
+      this.delegate.handleMouseMoveAboveRowDragView(-1)
+    }
 
   }
 
   private handleDocumentElementMouseUp(event: MouseEvent) {
+    this.delegate.handleDocumentMouseUp(event)
   }
 
   private handleCanvasElementClick(event: MouseEvent) {
@@ -61,7 +82,6 @@ export default class EventHandler {
       return
     }
     const sheetStoreData = this.delegate.getCurrentSheetStore()
-    console.log(sheetStoreData, 'sheetStoreData')
 
     // shift + 点击：范围单元格的处理（前提：已经存在一个高亮的单元格）
     if (
@@ -107,23 +127,27 @@ export default class EventHandler {
 
     // 点击列的确定
     let columnIndex = -1
-    let canvasX = pageX - canvasClientRect.left - this.delegate.getRenderedRowTitleBarWidth()
-    for (let columnIndexKey of Object.keys(sheetStoreData.columnTitleBarXValues).sort((a, b) => parseInt(a) - parseInt(b))) {
-      let columnSplitLineX = sheetStoreData.columnTitleBarXValues[parseInt(columnIndexKey)]
-      if (canvasX < columnSplitLineX) {
-        columnIndex = Number.parseInt(columnIndexKey)
-        break
+    let canvasX = pageX - canvasClientRect.left - this.delegate.getRenderedColumnTitleBarHeight()
+    if (canvasX >= 0) {
+      for (let columnIndexKey of Object.keys(sheetStoreData.columnTitleBarXValues).sort((a, b) => parseInt(a) - parseInt(b))) {
+        let columnSplitLineX = sheetStoreData.columnTitleBarXValues[parseInt(columnIndexKey)]
+        if (canvasX < columnSplitLineX) {
+          columnIndex = Number.parseInt(columnIndexKey)
+          break
+        }
       }
     }
 
     // 点击行的确定
     let rowIndex = -1
     let canvasY = pageY - canvasClientRect.top - this.delegate.getRenderedColumnTitleBarHeight()
-    for (let rowIndexKey of Object.keys(sheetStoreData.rowTitleBarYValues).sort((a, b) => parseInt(a) - parseInt(b))) {
-      let rowSplitLineY = sheetStoreData.rowTitleBarYValues[parseInt(rowIndexKey)]
-      if (canvasY < rowSplitLineY) {
-        rowIndex = Number.parseInt(rowIndexKey)
-        break
+    if (canvasY >= 0) {
+      for (let rowIndexKey of Object.keys(sheetStoreData.rowTitleBarYValues).sort((a, b) => parseInt(a) - parseInt(b))) {
+        let rowSplitLineY = sheetStoreData.rowTitleBarYValues[parseInt(rowIndexKey)]
+        if (canvasY < rowSplitLineY) {
+          rowIndex = Number.parseInt(rowIndexKey)
+          break
+        }
       }
     }
 
