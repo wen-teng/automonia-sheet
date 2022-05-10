@@ -7,6 +7,7 @@ import SheetView from "./view/sheet-view";
 import SheetViewDelegate from "./view/sheet-view-delegate";
 import EventHandler from './event-handler/event-handler';
 import EventHandlerDelegate from './event-handler/event-handler-delegate';
+import SelectionType from './store/selection-type';
 
 /**
  * 表单对象
@@ -67,7 +68,7 @@ export default class Sheet implements EventHandlerDelegate, SheetViewDelegate {
     let sheetHeight = 0
     let renderedRowAmount = 0
     for (let rowIndex = 0; rowIndex < this.configuration.rowAmountOfEmptySheet; rowIndex++) {
-      let rowHeight = worksheet.getRow(rowIndex + 1)?.height || this.configuration.defaultRowHeight
+      let rowHeight = worksheet.getRow(rowIndex + 1).height || this.configuration.defaultRowHeight
       sheetHeight += rowHeight
       rowTitleBarYValues[rowIndex] = sheetHeight
     }
@@ -88,6 +89,7 @@ export default class Sheet implements EventHandlerDelegate, SheetViewDelegate {
 
     // 当前工作簿的缓存数据
     this.store[this.store.currentSheetId] = {
+      ...(this.store[this.store.currentSheetId] || {}),
       sheetWidth,
       sheetHeight,
       rowTitleBarYValues,
@@ -96,7 +98,25 @@ export default class Sheet implements EventHandlerDelegate, SheetViewDelegate {
       renderedColumnAmount
     }
 
+    // 绘制工作表
     this.sheetView.renderCurrentWorksheet()
+
+    // 根据缓存的选择单元格类型信息重新高亮所选的单元格
+    const sheetStoreData = this.getCurrentSheetStore()
+    console.log(sheetStoreData.selectionType, 'sheetStoreData.selectionType');
+    if (sheetStoreData.selectionType !== undefined) {
+      if (sheetStoreData.selectionType === SelectionType.singleSelectionCell && sheetStoreData.currentSelectRowIndex !== undefined && sheetStoreData.currentSelectColumnIndex !== undefined) {
+        this.highlightCell(sheetStoreData.currentSelectRowIndex!, sheetStoreData.currentSelectColumnIndex!)
+      }
+      else if (sheetStoreData.selectionType === SelectionType.singleSelectionRangeCell && sheetStoreData.currentSelectionRangeCell) {
+        this.highlightRangeCell(
+          sheetStoreData.currentSelectionRangeCell.startRowIndex,
+          sheetStoreData.currentSelectionRangeCell.endRowIndex,
+          sheetStoreData.currentSelectionRangeCell.startColumnIndex,
+          sheetStoreData.currentSelectionRangeCell.endColumnIndex
+        )
+      }
+    }
   }
 
   ////////////////////////////////////////////////////////////////
@@ -126,6 +146,7 @@ export default class Sheet implements EventHandlerDelegate, SheetViewDelegate {
 
     // 缓存数据
     const sheetStoreData = this.getCurrentSheetStore()
+    sheetStoreData.selectionType = SelectionType.singleSelectionCell
     sheetStoreData.currentSelectRowIndex = rowIndex
     sheetStoreData.currentSelectColumnIndex = columnIndex
 
@@ -142,6 +163,7 @@ export default class Sheet implements EventHandlerDelegate, SheetViewDelegate {
 
     // 缓存数据
     const sheetStoreData = this.getCurrentSheetStore()
+    sheetStoreData.selectionType = SelectionType.singleSelectionRangeCell
     sheetStoreData.currentSelectRowIndex = startRowIndex
     sheetStoreData.currentSelectColumnIndex = startColumnIndex
     sheetStoreData.currentSelectionRangeCell = {

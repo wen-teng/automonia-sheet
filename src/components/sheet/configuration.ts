@@ -59,14 +59,19 @@ export default class Configuration {
 
   // 行标题栏拖动配置
   rowDragConfig = {
+    // 行拖动视图
     viewElementId: 'row-drag-view',
-    lienViewElementId: 'row-drag-line-view'
+    // 行拖动对标线视图
+    lienViewElementId: 'row-drag-line-view',
+    // 拖动后的最小高度
+    minHeight: 5
   }
 
   // 列标题栏拖动配置
   columnDragConfig = {
     viewElementId: 'column-drag-view',
-    lienViewElementId: 'column-drag-line-view'
+    lienViewElementId: 'column-drag-line-view',
+    minWidth: 5
   }
 
   singleSelection = {

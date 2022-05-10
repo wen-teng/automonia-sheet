@@ -28,6 +28,9 @@ export default class CanvasView implements HandlerDelegate {
 
   // 绘制
   renderCurrentWorksheet() {
+    // 原canvas内容的清除
+    this.canvasContext.clearRect(0, 0, this.canvasElement.width, this.canvasElement.height)
+
     /**
      * 使用工作簿的宽度和高度设置canvas的宽度和高度 
      * -（canvas实际大小多出一行一列, 如果显示行列标题栏则需加上其大小）

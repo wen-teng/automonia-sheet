@@ -1,6 +1,10 @@
 import SelectionRangeCell from "./selection-range-cell"
+import SelectionType from "./selection-type"
 
 export default interface SheetStore {
+
+  // 单元格选择类型
+  selectionType?: SelectionType
 
   // 当前选择的行序号
   currentSelectRowIndex?: number
