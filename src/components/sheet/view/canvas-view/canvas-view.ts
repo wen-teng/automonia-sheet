@@ -1,4 +1,3 @@
-import { Worksheet } from "exceljs";
 import sheetUtils from "../../utils/sheet-utils";
 import SheetViewDelegate from "../sheet-view-delegate";
 import ColumnDragHandler from "./handler/column-drag-handler";
