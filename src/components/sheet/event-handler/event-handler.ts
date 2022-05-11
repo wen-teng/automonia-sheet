@@ -93,7 +93,6 @@ export default class EventHandler {
 
   private handleCanvasElementClick(event: MouseEvent) {
     let { rowIndex, columnIndex } = this.getRowColumnIndexByPageXY(event.pageX, event.pageY)
-    console.log(rowIndex, columnIndex, 'rowIndex, columnIndex');
 
     // 点击列
     if (rowIndex < 0 && columnIndex >= 0) {
@@ -123,6 +122,7 @@ export default class EventHandler {
       this.delegate.highlightCell(rowIndex, columnIndex)
     }
 
+    // 全选单元格的处理
     if (rowIndex < 0 && columnIndex < 0) {
       this.delegate.highlightAllCell()
     }
