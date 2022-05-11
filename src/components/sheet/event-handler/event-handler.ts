@@ -123,6 +123,10 @@ export default class EventHandler {
       this.delegate.highlightCell(rowIndex, columnIndex)
     }
 
+    if (rowIndex < 0 && columnIndex < 0) {
+      this.delegate.highlightAllCell()
+    }
+
   }
 
   private handleDocumentElementKeyDown(event: KeyboardEvent) {

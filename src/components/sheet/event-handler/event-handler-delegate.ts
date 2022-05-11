@@ -1,4 +1,3 @@
-import KeywordMouseEventHandler from "./event-handler"
 import SheetDelegate from "../sheet-delegate"
 
 export default interface EventHandlerDelegate extends SheetDelegate {
@@ -50,6 +49,12 @@ export default interface EventHandlerDelegate extends SheetDelegate {
    * @param endColumnIndex 结束位置的列序号
    */
   highlightRangeCell(startRowIndex: number, endRowIndex: number, startColumnIndex: number, endColumnIndex: number): void
+
+
+  /**
+   * 处理全选单元格的高亮
+   */
+  highlightAllCell(): void
 
   /**
    * 处理document的mouseup事件

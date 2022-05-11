@@ -1,4 +1,3 @@
-import { Workbook, Worksheet } from "exceljs"
 import Configuration from "./configuration"
 import Store from "./store"
 import SheetStore from "./store/sheet-store"

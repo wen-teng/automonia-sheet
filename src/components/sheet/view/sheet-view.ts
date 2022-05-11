@@ -69,6 +69,10 @@ export default class SheetView {
     this.canvasView.highlightRow(rowIndex)
   }
 
+  highlightAllCell() {
+    this.canvasView.highlightAllCell()
+  }
+
   renderCurrentWorksheet() {
     this.canvasView.renderCurrentWorksheet()
   }

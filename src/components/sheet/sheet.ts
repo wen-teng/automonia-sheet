@@ -142,6 +142,10 @@ export default class Sheet implements EventHandlerDelegate, SheetViewDelegate {
     this.sheetView.highlightColumn(columnIndex)
   }
 
+  highlightAllCell() {
+    this.sheetView.highlightAllCell()
+  }
+
   highlightRow(rowIndex: number) {
     this.sheetView.highlightRow(rowIndex)
   }
