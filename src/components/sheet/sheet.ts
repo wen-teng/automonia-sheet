@@ -103,7 +103,6 @@ export default class Sheet implements EventHandlerDelegate, SheetViewDelegate {
 
     // 根据缓存的选择单元格类型信息重新高亮所选的单元格
     const sheetStoreData = this.getCurrentSheetStore()
-    console.log(sheetStoreData.selectionType, 'sheetStoreData.selectionType');
     if (sheetStoreData.selectionType !== undefined) {
       if (sheetStoreData.selectionType === SelectionType.singleSelectionCell && sheetStoreData.currentSelectRowIndex !== undefined && sheetStoreData.currentSelectColumnIndex !== undefined) {
         this.highlightCell(sheetStoreData.currentSelectRowIndex!, sheetStoreData.currentSelectColumnIndex!)
@@ -137,6 +136,10 @@ export default class Sheet implements EventHandlerDelegate, SheetViewDelegate {
 
   handleMouseMoveAboveRowDragView(canvasY: number) {
     this.sheetView.handleMouseMoveAboveRowDragView(canvasY)
+  }
+
+  handleMouseMoveAboveColumnDragView(canvasX: number) {
+    this.sheetView.handleMouseMoveAboveColumnDragView(canvasX)
   }
 
   highlightCell(rowIndex: number, columnIndex: number): void {
