@@ -159,7 +159,7 @@ export default class EventHandler {
 
     // 点击列的确定
     let columnIndex = -1
-    let canvasX = pageX - canvasClientRect.left - this.delegate.getRenderedColumnTitleBarHeight()
+    let canvasX = pageX - canvasClientRect.left - this.delegate.getRenderedRowTitleBarWidth()
     if (canvasX >= 0) {
       for (let columnIndexKey of Object.keys(sheetStoreData.columnTitleBarXValues).sort((a, b) => parseInt(a) - parseInt(b))) {
         let columnSplitLineX = sheetStoreData.columnTitleBarXValues[parseInt(columnIndexKey)]
