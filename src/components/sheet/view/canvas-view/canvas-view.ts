@@ -91,6 +91,16 @@ export default class CanvasView implements HandlerDelegate {
     this.singleSelectionHandler.highlightCell(rowIndex, columnIndex)
   }
 
+  public highlightColumn(columnIndex: number) {
+    let totalRowAmount = this.delegate.getCurrentSheetStore().renderedRowAmount
+    this.highlightRangeCell(0, totalRowAmount - 1, columnIndex, columnIndex)
+  }
+
+  public highlightRow(rowIndex: number) {
+    let totalColumnAmount = this.delegate.getCurrentSheetStore().renderedColumnAmount
+    this.highlightRangeCell(rowIndex, rowIndex, 0, totalColumnAmount - 1)
+  }
+
   public highlightRangeCell(startRowIndex: number, endRowIndex: number, startColumnIndex: number, endColumnIndex: number) {
     this.singleSelectionHandler.highlightRangeCell(startRowIndex, endRowIndex, startColumnIndex, endColumnIndex)
   }

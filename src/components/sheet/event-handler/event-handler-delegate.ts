@@ -28,6 +28,20 @@ export default interface EventHandlerDelegate extends SheetDelegate {
    */
   highlightCell(rowIndex: number, columnIndex: number): void
 
+
+  /**
+   * 列的高亮
+   * @param columnIndex 列序号
+   */
+  highlightColumn(columnIndex: number): void
+
+  /**
+   * 行的高亮
+   * @param rowIndex 行序号
+   */
+  highlightRow(rowIndex: number): void
+
+
   /**
    * 范围单元格的高亮
    * @param startRowIndex 开始位置的行序号

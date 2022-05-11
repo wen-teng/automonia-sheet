@@ -138,6 +138,14 @@ export default class Sheet implements EventHandlerDelegate, SheetViewDelegate {
     this.sheetView.handleMouseMoveAboveRowDragView(canvasY)
   }
 
+  highlightColumn(columnIndex: number) {
+    this.sheetView.highlightColumn(columnIndex)
+  }
+
+  highlightRow(rowIndex: number) {
+    this.sheetView.highlightRow(rowIndex)
+  }
+
   handleMouseMoveAboveColumnDragView(canvasX: number) {
     this.sheetView.handleMouseMoveAboveColumnDragView(canvasX)
   }

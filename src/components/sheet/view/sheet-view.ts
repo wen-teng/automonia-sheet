@@ -61,6 +61,14 @@ export default class SheetView {
 
   }
 
+  highlightColumn(columnIndex: number) {
+    this.canvasView.highlightColumn(columnIndex)
+  }
+
+  highlightRow(rowIndex: number) {
+    this.canvasView.highlightRow(rowIndex)
+  }
+
   renderCurrentWorksheet() {
     this.canvasView.renderCurrentWorksheet()
   }

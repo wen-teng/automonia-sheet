@@ -93,23 +93,36 @@ export default class EventHandler {
 
   private handleCanvasElementClick(event: MouseEvent) {
     let { rowIndex, columnIndex } = this.getRowColumnIndexByPageXY(event.pageX, event.pageY)
-    if (rowIndex < 0 || columnIndex < 0) {
-      return
-    }
-    const sheetStoreData = this.delegate.getCurrentSheetStore()
+    console.log(rowIndex, columnIndex, 'rowIndex, columnIndex');
 
-    // shift + 点击：范围单元格的处理（前提：已经存在一个高亮的单元格）
-    if (
-      this.cacheTouchedKey[KeyboardKeys.shift] &&
-      sheetStoreData.currentSelectColumnIndex !== undefined &&
-      sheetStoreData.currentSelectRowIndex !== undefined
-    ) {
-      this.delegate.highlightRangeCell(sheetStoreData.currentSelectRowIndex, rowIndex, sheetStoreData.currentSelectColumnIndex, columnIndex)
-      return
+    // 点击列
+    if (rowIndex < 0 && columnIndex >= 0) {
+      this.delegate.highlightColumn(columnIndex)
     }
 
-    // 高亮单元格
-    this.delegate.highlightCell(rowIndex, columnIndex)
+    // 点击行
+    if (columnIndex < 0 && rowIndex >= 0) {
+      this.delegate.highlightRow(rowIndex)
+    }
+
+    // 点击单元格
+    if (rowIndex >= 0 && columnIndex >= 0) {
+      const sheetStoreData = this.delegate.getCurrentSheetStore()
+
+      // shift + 点击：范围单元格的处理（前提：已经存在一个高亮的单元格）
+      if (
+        this.cacheTouchedKey[KeyboardKeys.shift] &&
+        sheetStoreData.currentSelectColumnIndex !== undefined &&
+        sheetStoreData.currentSelectRowIndex !== undefined
+      ) {
+        this.delegate.highlightRangeCell(sheetStoreData.currentSelectRowIndex, rowIndex, sheetStoreData.currentSelectColumnIndex, columnIndex)
+        return
+      }
+
+      // 高亮单元格
+      this.delegate.highlightCell(rowIndex, columnIndex)
+    }
+
   }
 
   private handleDocumentElementKeyDown(event: KeyboardEvent) {
