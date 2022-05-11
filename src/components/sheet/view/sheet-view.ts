@@ -1,5 +1,3 @@
-import { Workbook } from "exceljs";
-import EventHandler from "../event-handler/event-handler";
 import CanvasView from "./canvas-view/canvas-view";
 import SheetViewDelegate from "./sheet-view-delegate";
 
@@ -77,6 +75,10 @@ export default class SheetView {
 
   handleMouseMoveAboveRowDragView(canvasY: number) {
     this.canvasView.handleMouseMoveAboveRowDragView(canvasY)
+  }
+
+  handleMouseMoveAboveColumnDragView(canvasX: number) {
+    this.canvasView.handleMouseMoveAboveColumnDragView(canvasX)
   }
 
   handleCanvasMouseMove(event: MouseEvent) {

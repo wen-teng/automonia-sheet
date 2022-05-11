@@ -41,7 +41,25 @@
     top: 2px;
     height: 1px;
     background-color: #4b8cff;
-    width: 100px;
+  }
+}
+
+// 列标题栏拖动视图
+.column-drag-view {
+  display: none;
+  width: 5px;
+  position: absolute;
+  top: 1px;
+  cursor: row-resize;
+  background-color: #4b8cff;
+
+  .column-drag-line-view {
+    position: absolute;
+    display: none;
+    left: 2px;
+    top: 0;
+    width: 1px;
+    background-color: #4b8cff;
   }
 }
 

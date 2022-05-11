@@ -70,6 +70,21 @@ export default class EventHandler {
       this.delegate.handleMouseMoveAboveRowDragView(-1)
     }
 
+    /**
+     * 高亮列标题栏拖动视图
+     * 判断条件：如果列标题栏显示并pageX在标题栏上
+     */
+    if (
+      this.delegate.getConfiguration().columnBarTitleVisible
+      && pageY - canvasClientRect.top >= 0
+      && pageY - canvasClientRect.top <= this.delegate.getRenderedColumnTitleBarHeight()
+    ) {
+      let canvasX = pageX - canvasClientRect.left - this.delegate.getRenderedRowTitleBarWidth()
+      this.delegate.handleMouseMoveAboveColumnDragView(canvasX)
+    } else {
+      this.delegate.handleMouseMoveAboveColumnDragView(-1)
+    }
+
   }
 
   private handleDocumentElementMouseUp(event: MouseEvent) {

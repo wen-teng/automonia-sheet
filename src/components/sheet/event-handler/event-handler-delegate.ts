@@ -9,6 +9,13 @@ export default interface EventHandlerDelegate extends SheetDelegate {
    */
   handleMouseMoveAboveRowDragView(canvasY: number): void
 
+
+  /**
+   * 处理鼠标移动到列拖动视图上方
+   * @param canvasX  在canvas上x坐标
+   */
+  handleMouseMoveAboveColumnDragView(canvasX: number): void
+
   // /**
   //  * 取消行标题栏的高亮
   //  */

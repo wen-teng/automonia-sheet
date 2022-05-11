@@ -1,6 +1,7 @@
 import { Worksheet } from "exceljs";
 import sheetUtils from "../../utils/sheet-utils";
 import SheetViewDelegate from "../sheet-view-delegate";
+import ColumnDragHandler from "./handler/column-drag-handler";
 import HandlerDelegate from "./handler/handler-delegate";
 import RowDragHandler from "./handler/row-drag-handler";
 import SingleSelectionHandler from "./handler/single-selection-handler";
@@ -13,6 +14,7 @@ export default class CanvasView implements HandlerDelegate {
 
   private singleSelectionHandler: SingleSelectionHandler
   private rowDragHandler: RowDragHandler
+  private columnDragHandler: ColumnDragHandler
 
 
   constructor(delegate: SheetViewDelegate) {
@@ -24,6 +26,7 @@ export default class CanvasView implements HandlerDelegate {
     // 各种处理器创建
     this.singleSelectionHandler = new SingleSelectionHandler(this)
     this.rowDragHandler = new RowDragHandler(this)
+    this.columnDragHandler = new ColumnDragHandler(this)
   }
 
   // 绘制
@@ -96,12 +99,18 @@ export default class CanvasView implements HandlerDelegate {
     this.rowDragHandler.handleMouseMoveAboveRowDragView(canvasY)
   }
 
+  public handleMouseMoveAboveColumnDragView(canvasX: number) {
+    this.columnDragHandler.handleMouseMoveAboveColumnDragView(canvasX)
+  }
+
   public handleDocumentMouseUp(event: MouseEvent) {
     this.rowDragHandler.handleRowDragViewMouseUp(event)
+    this.columnDragHandler.handleColumnDragViewMouseUp(event)
   }
 
   public handleCanvasMouseMove(event: MouseEvent) {
     this.rowDragHandler.handleCanvasMouseMove(event)
+    this.columnDragHandler.handleCanvasMouseMove(event)
   }
 
   private renderSelectAllCellView() {
